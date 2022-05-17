@@ -54,5 +54,28 @@ f.close() # close the file
 print("The sum of numbers from the created file is", theSum)
 ```
 
-    The sum of numbers from the created file is 123125
+    The sum of numbers from the created file is 120943
+    
+
+## Read the entire file as string `f.read()`
+
+
+```python
+f = open(file_loc, 'r')
+contentsOfFile = f.read()
+f.close() # close the file
+
+# Print it
+print(contentsOfFile)
+```
+    487
+    433
+    9
+    332
+    415
+    109
+    9
+    2
+    ...
+    
     
