@@ -30,6 +30,10 @@
 import random
 ```
 
+## Doctor Response Inputs
+
+### Static Responses from the Doctor
+
 
 ```python
 hedges = ("Please tell me more.",
@@ -40,6 +44,8 @@ hedges = ("Please tell me more.",
 
 ```
 
+### Dynamic responses from the Doctor
+
 
 ```python
 qualifiers = ("Why do you say ",
@@ -48,6 +54,8 @@ qualifiers = ("Why do you say ",
 
 ```
 
+### Pronouns to change from the patient's statement
+
 
 ```python
 replacements = {"I":"you", "me":"you", "my":"your", "My":"your", 
@@ -55,9 +63,12 @@ replacements = {"I":"you", "me":"you", "my":"your", "My":"your",
 
 ```
 
+## Functions
+
+### Function that Builds and returns a reply to an input sentence
+
 
 ```python
-## Builds and returns a reply to an input sentence
 
 def reply(sentence):
   probability = random.randint(1, 4)
@@ -68,11 +79,11 @@ def reply(sentence):
 
 ```
 
+### Function that Replaces first person pronouns with second person
+
 
 ```python
-## Replaces first person pronouns with second person
 ## Uses the dictionary replacements
-
 def changePersons(sentence):
   words = sentence.split()
   replyWords = []
@@ -80,6 +91,8 @@ def changePersons(sentence):
       replyWords.append(replacements.get(word, word))
   return " ".join(replyWords)
 ```
+
+## Main Method
 
 
 ```python
@@ -101,23 +114,23 @@ while True:
     Good morning.  I hope you are well today?
     What can I do for you?
     
-    >> My mother and I do not get along
-    Can you explain why your mother and you do not get along
+    >> I am really mad
+    Why do you say you am really mad
     
-    >> She always favors my sister
-    Can you explain why She always favors your sister
+    >> Well, I hate life!
+    Why do you say Well, you hate life!
     
-    >> my dad and I get along fine
-    Can you explain why your dad and you get along fine
+    >> My dog is mean
+    Can you explain why your dog is mean
     
-    >> He helps me with my homework
-    Please tell me more.
+    >> She doesn't ever listen!
+    Many of my patients tell me the same thing.
     
-    >> When I need to study he asks me questions
-    Why do you say When you need to study he asks you questions
+    >> Are you kidding? You have not seen this animal in action though...
+    You seem to think that Are you kidding? You have not seen this animal in action though...
     
-    >> That is how he helps me with my homework
-    Can you explain why That is how he helps you with your homework
+    >> Yeah, tell me about it, bub
+    Can you explain why Yeah, tell you about it, bub
     
 
 
