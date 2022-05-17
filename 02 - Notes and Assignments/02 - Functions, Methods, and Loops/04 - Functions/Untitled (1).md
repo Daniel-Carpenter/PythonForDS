@@ -1,21 +1,4 @@
-## Functions
-
-*Recommended reading:  PDA - Chapter 3*  
-
-### Topics:
-* def
-* return
-* Namespaces
-* Scope:  area in which a given name refers to a given value
-* Local Functions
-* Errors and Exception Handling
-
-
----
-
-<br>
-
-# Example Functions
+# Functions
 * This script provides two simple functions
 * The first function accepts a number and prints
 * out the OU cheer that number of times
@@ -61,4 +44,3 @@ print(functionMath(2, 5))
 
     (10, 7)
     
-
