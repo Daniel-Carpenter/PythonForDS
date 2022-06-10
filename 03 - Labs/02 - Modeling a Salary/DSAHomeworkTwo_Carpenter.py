@@ -112,6 +112,7 @@ allConfs = sns.pairplot(df, y_vars=['TotalPay'],
 
 allConfs.fig.suptitle('Pair Plot of all Conferences. Note Stadium Size and Score')
 
+
 ## Does the conference have anything to do? -----------------------------------
 
 ### Get Unique list of conferences to iterate over
@@ -132,8 +133,35 @@ for conference in uniqueConferences:
 
     # Add some titles
     thePlot.fig.suptitle("Conference Name: " + conference + " | Schools in Conf.: " + str(len(df_tempConf['School'])))
+    
 
-# Boxplots of salary # TODO
+# Distribution of salary  ---------------------------------------------------------
+
+import matplotlib.pyplot as plt
+
+## Create the figure
+fig, axs = plt.subplots(2, 1, constrained_layout=False)
+
+## The title of the figure
+fig.suptitle("Distribution of Head Coach Salaries")
+
+## A histogram of salaries
+axs[0].hist(df['TotalPay'], density = False, stacked = False, rwidth = .8)
+axs[0].set_ylabel('Number of Schools')
+
+## A boxplot of salaries
+axs[1].boxplot(df['TotalPay'], vert=False)
+axs[1].set_xlabel('Salary (Millions of Dollars)')
+axs[1].set_ylabel('Number of Schools')
+
+plt.show()
+
+
+# Boxplot by conference -------------------------------------------------------
+bplots = sns.boxplot(y="Conference", x="TotalPay", color = "steelblue1",
+                     data=df.sort_values(by="TotalPay"))
+bplots.set_title('Distribution of Head Coach Salaries')
+bplots.set_xlabel('Salary (Millions of Dollars)')
 
 
 # =============================================================================
