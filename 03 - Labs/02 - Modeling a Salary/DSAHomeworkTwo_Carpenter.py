@@ -133,40 +133,130 @@ for conference in uniqueConferences:
     # Add some titles
     thePlot.fig.suptitle("Conference Name: " + conference + " | Schools in Conf.: " + str(len(df_tempConf['School'])))
 
-# Boxplots/distributional
+# Boxplots of salary # TODO
+
 
 # =============================================================================
 # Fit a regression model with the salary as the response variable
 # =============================================================================
+
+import statsmodels.formula.api as smf # Linear regression package
+
+# Create the model
+# Note Did not include LossRecord or WinLossRatio since multicolinearity
+# Note Did not include Score since potential colinearity with Points per game
+model = smf.ols(formula='TotalPay ~ Conference + GradRate + StadSize + WinRecord + OffenseScore + DefenseScore + PointsPerGame',
+                data=df)
+
+# The estimation using OLS
+est = model.fit()
+
+# Show the fitted model
+print(est.summary())
+
+# Get the coefficients
+coefsRaw = est.params      # As series
+coefs = np.array(coefsRaw) # AS np array
 
 
 # =============================================================================
 # What is the recommended salary for the OU football coach?
 # =============================================================================
 
-# Create a function with the paramters and fit with OU data
+# Create a function to compare salary of a given school to its estimated salary based on data
+# Also can perform what if analysis with the conference. E.g. move a coach to another conf.
+def estimateCoachSalary(chosenSchool,    # The school to see check estiamted salary of
+                        whatIfConference # Can change the conference to see if salary changes
+                        ):
+
+    # Filter to the chosen school
+    school_Stats = df.query("School == @chosenSchool")
+    
+    # Input paramaters of the school
+    school_Conference    = 'Conference[T.' + whatIfConference +']'
+    school_Coach         = str(np.array(school_Stats['Coach'])[0])
+    school_TotalPay      = float(school_Stats['TotalPay'])
+    school_GradRate      = float(school_Stats['GradRate'])
+    school_StadSize      = float(school_Stats['StadSize'])
+    school_WinRecord     = float(school_Stats['WinRecord'])
+    school_OffenseScore  = float(school_Stats['OffenseScore'])
+    school_DefenseScore  = float(school_Stats['DefenseScore'])
+    school_PointsPerGame = float(school_Stats['PointsPerGame'])
+    
+    # Input paramaters of the school in list
+    school_Params = [1, 1, # To indicate intercept and conference
+                     school_GradRate, school_StadSize,  school_WinRecord, 
+                     school_OffenseScore,  school_DefenseScore, school_PointsPerGame]
+    
+    
+    tailoredCoefs = [] # To hold a list of tailored coefficients
+    
+    for variable in range(len(coefsRaw)):
+    
+        indexName     = coefsRaw.index[variable]    
+        variableToAdd = coefs[variable]
+    
+        # Only add if in the right conference
+        if not (indexName.startswith("Conference") and not indexName == school_Conference):
+            tailoredCoefs.append(variableToAdd)
+    
+    
+    # Now calculate the expected salary by doing matrix multipication
+    estSalary = np.dot(np.array(tailoredCoefs), np.array(school_Params))
+    
+    # Summary of if overpaid
+    isOverpaid = estSalary < school_TotalPay
+    if isOverpaid: paidOverUnder = 'overpaid' 
+    else: paidOverUnder = 'underpaid'
+    
+    # Summary of salary
+    print('\nThe estimated (modeled) salary of', chosenSchool, 'in the', whatIfConference,
+          'is $', '{:,.2f}'.format(estSalary),
+          '\nCurrently,', chosenSchool, 'pays $', '{:,.0f}'.format(school_TotalPay),
+          '\n Therfore,', school_Coach, 'is', paidOverUnder)
+    
+    # Return the estimated salary
+    return estSalary
+    
+
+# Check the estimated salary of Oklahoma coach 
+estimateCoachSalary(chosenSchool = 'Oklahoma',
+                    whatIfConference = 'Big 12')
+
 
 # =============================================================================
 # What would the appropriate salary be if OU moved to the SEC?
 # =============================================================================
 
-# Change the parameter to the SEC
+# Change the conference of OU to the SEC
+estimateCoachSalary(chosenSchool = 'Oklahoma',
+                    whatIfConference = 'SEC')
+
 
 # =============================================================================
 # What schools did we drop from our data and why?
 # =============================================================================
 
-print('Below shows the schools dropped from the sample since there were null values:\n',
+print('\nBelow shows the schools dropped from the sample since there were null values:\n',
       removedSchools)
+
 
 # =============================================================================
 # What is the single biggest impact on salary size?
 # =============================================================================
 
-# Largest coefficient
+# Get the most impactful parameter (max) - note not best fit, highest value
+maxValue         = max(coefs)                  # The coefficient of the most impactful
+idxOfMaxValue    = np.where(coefs == maxValue) # The idx of the max value
+mostImpactfulVar = coefsRaw.index[idxOfMaxValue]     # The most impactful variable and value
 
-# =============================================================================
-# Bonus points for adding additional (relevant) data.
-# =============================================================================
+print('\nThe most impactful variable is:', mostImpactfulVar[0], 
+      '\nI.e., being in the', mostImpactfulVar[0], 
+      'correlates with an increase in salary of $', '{:,.2f}'.format(maxValue),
+      '\nPlease not that this does not consider the statistical significance.')
+
+print('\nNote that big 12 coefficient has a statistically signifcant t-value')
+print('Model also has very high R squared, indicating that most of the variation',
+      'in the independant variables explain the dependant variable.')
 
 
