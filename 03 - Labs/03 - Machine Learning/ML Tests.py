@@ -223,6 +223,7 @@ print('Bayesian Ridge Reg. Test Score: {:,.4f}'.format( bayes_ridgeReg.score(X_t
 
 
 # Maybe do one more?
+# Need to do visuals
 
 # Summary of Classifier Models
 # -----------------------------------------------------------------------------
